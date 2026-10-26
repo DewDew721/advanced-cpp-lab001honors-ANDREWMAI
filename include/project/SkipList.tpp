@@ -149,7 +149,7 @@ bool SkipList<Key, Value>::contains(const Key& key) const { return find(key) != 
 template <typename Key, typename Value>
 Value* SkipList<Key, Value>::find(const Key& key) {
     // TODO: Search from the highest level down; return the value pointer or nullptr.
-    Node<Key, Value>* current = head_;
+    Node* current = head_;
     for (std::size_t i = maxLevel_; i >= 0; i--)
     {
         while (current->forward[i] != nullptr && current->forward[i]->key < key) 
@@ -170,7 +170,7 @@ Value* SkipList<Key, Value>::find(const Key& key) {
 template <typename Key, typename Value>
 const Value* SkipList<Key, Value>::find(const Key& key) const {
     // TODO: Const version of find().
-    Node<Key, Value>* current = head_;
+    const Node* current = head_;
     for (std::size_t i = maxLevel_; i >= 0; i--)
     {
         while (current->forward[i] != nullptr && current->forward[i]->key < key) 
@@ -198,13 +198,13 @@ template <typename Key, typename Value>
 std::vector<std::pair<Key, Value>> SkipList<Key, Value>::items() const {
     // TODO: Traverse level 0 and return all entries in ascending key order.
     std::vector<std::pair<Key, Value>> result;
-    Node<Key, Value>* current = head_->forward[0];
+    Node* current = head_->forward[0];
     while (current != nullptr) 
     {
         result.emplace_back(current->key, current->value);
         current = current->forward[0];
     }
-    
+
     return result;
 }
 
