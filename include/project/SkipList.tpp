@@ -79,7 +79,7 @@ bool SkipList<Key, Value>::insert(const Key& key, const Value& value) {
     Node* current = head_;
     std::vector<Node*> update(maxLevel_ + 1, nullptr);
 
-    for (std::size_t i = maxLevel_; i >= 0; i--)
+    for (std::size_t i = currentLevel_; i >= 0; i--)
     {
         while (current->forward[i] != nullptr && current->forward[i]->key < key) 
         {
@@ -96,13 +96,13 @@ bool SkipList<Key, Value>::insert(const Key& key, const Value& value) {
     } 
     
     std::size_t newLevel = randomLevel();
-    if (newLevel > maxLevel_)
+    if (newLevel > currentLevel_)
     {
-        for (std::size_t i = maxLevel_ + 1; i <= newLevel; i++) 
+        for (std::size_t i = currentLevel_ + 1; i <= newLevel; i++) 
         {
             update[i] = head_;
         }
-        maxLevel_ = newLevel;
+        currentLevel_ = newLevel;
     }
     
     Node* newNode = new Node(key, value, newLevel);
@@ -124,7 +124,7 @@ bool SkipList<Key, Value>::erase(const Key& key) {
     Node* current = head_;
     std::vector<Node*> update(maxLevel_ + 1, nullptr);
 
-    for (std::size_t i = maxLevel_; i >= 0; i--)
+    for (std::size_t i = currentLevel_; i >= 0; i--)
     {
         while (current->forward[i] != nullptr && current->forward[i]->key < key) 
         {
@@ -136,7 +136,7 @@ bool SkipList<Key, Value>::erase(const Key& key) {
 
     if (current != nullptr && current->key == key) 
     {
-        for (std::size_t i = 0; i <= maxLevel_; i++) 
+        for (std::size_t i = 0; i <= currentLevel_; i++) 
         {
             if (update[i]->forward[i] != current) 
             {
@@ -146,6 +146,12 @@ bool SkipList<Key, Value>::erase(const Key& key) {
         }
         delete current;
         --size_;
+
+        while (currentLevel_ > 0 && head_->forward[currentLevel_] == nullptr) 
+        {
+            --currentLevel_;
+        }
+
         return true; // Node deleted
     } 
     return false; // Node not found
@@ -159,7 +165,7 @@ template <typename Key, typename Value>
 Value* SkipList<Key, Value>::find(const Key& key) {
     // TODO: Search from the highest level down; return the value pointer or nullptr.
     Node* current = head_;
-    for (std::size_t i = maxLevel_; i >= 0; --i)
+    for (std::size_t i = currentLevel_; i >= 0; --i)
     {
         while (current->forward[i] != nullptr && current->forward[i]->key < key) 
         {
@@ -180,7 +186,7 @@ template <typename Key, typename Value>
 const Value* SkipList<Key, Value>::find(const Key& key) const {
     // TODO: Const version of find().
     const Node* current = head_;
-    for (std::size_t i = maxLevel_; i >= 0; --i)
+    for (std::size_t i = currentLevel_; i >= 0; --i)
     {
         while (current->forward[i] != nullptr && current->forward[i]->key < key) 
         {
