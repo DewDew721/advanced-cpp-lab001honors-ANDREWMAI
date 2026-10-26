@@ -103,7 +103,7 @@ bool SkipList<Key, Value>::insert(const Key& key, const Value& value) {
         }
         maxLevel_ = newLevel;
     }
-    
+
     Node* newNode = new Node(key, value, newLevel);
 
     for (std::size_t i = 0; i <= newLevel; i++) 
@@ -169,7 +169,7 @@ Value* SkipList<Key, Value>::find(const Key& key) {
     current = current->forward[0];
     if (current != nullptr && current->key == key) 
     {
-        return &(current->value); // Return pointer to value
+        return current; // Return pointer to value
     }
 
     return nullptr;
@@ -190,7 +190,7 @@ const Value* SkipList<Key, Value>::find(const Key& key) const {
     
     if (current != nullptr && current->key == key) 
     {
-        return &(current->value); // Return pointer to value
+        return current; // Return pointer to value
     }
 
     return nullptr;
